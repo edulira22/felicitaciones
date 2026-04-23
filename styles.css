@@ -7,10 +7,10 @@
   --ink: #ececee;
   --ink-2: #a7a7ad;
   --ink-3: #6c6c74;
-  --gold: oklch(0.82 0.11 85);
-  --gold-soft: oklch(0.72 0.09 85);
-  --gold-deep: oklch(0.58 0.10 75);
-  --accent-dim: oklch(0.35 0.04 85);
+  --gold: #cfa847;
+  --gold-soft: #b08f3a;
+  --gold-deep: #7f6425;
+  --accent-dim: #3a2e12;
 }
 
 *{box-sizing:border-box}

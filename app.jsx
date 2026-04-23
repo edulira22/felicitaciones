@@ -118,19 +118,35 @@ function App() {
     try {
       const card = cardRef.current.querySelector(".card");
       const wrap = cardRef.current;
-      const prev = wrap.style.transform;
+
+      // Reset scale so html2canvas captures full resolution
+      const prevTransform = wrap.style.transform;
+      const prevPosition = wrap.style.position;
+      const prevTop = wrap.style.top;
+      const prevLeft = wrap.style.left;
       wrap.style.transform = "scale(1)";
-      await new Promise((r) => setTimeout(r, 60));
+      wrap.style.position = "fixed";
+      wrap.style.top = "-9999px";
+      wrap.style.left = "-9999px";
+
+      await new Promise((r) => setTimeout(r, 120));
 
       const canvas = await html2canvas(card, {
         width: 1080,
         height: 1920,
         scale: 1,
         useCORS: true,
+        allowTaint: true,
         backgroundColor: null,
         logging: false,
+        imageTimeout: 0,
       });
-      wrap.style.transform = prev;
+
+      // Restore position
+      wrap.style.transform = prevTransform;
+      wrap.style.position = prevPosition;
+      wrap.style.top = prevTop;
+      wrap.style.left = prevLeft;
 
       const safe = (data.name || "post").replace(/[^\w\s-]/g, "").trim().replace(/\s+/g, "-").toLowerCase();
       const link = document.createElement("a");
@@ -140,7 +156,7 @@ function App() {
       showToast("Descarga lista ✓");
     } catch (err) {
       console.error(err);
-      showToast("Error al descargar");
+      showToast("Error al descargar — intenta de nuevo");
     } finally {
       setBusy(false);
     }
