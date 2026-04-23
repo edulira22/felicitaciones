@@ -20,16 +20,16 @@ const photo = (src) => src ? `<img src="${src}" style="width:100%;height:100%;ob
 const star = (size, x, y, op, rot = 0) => `<svg class="star" style="left:${x}px;top:${y}px;width:${size}px;height:${size}px;opacity:${op};transform:rotate(${rot}deg)" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1 L14.5 9 L23 12 L14.5 15 L12 23 L9.5 15 L1 12 L9.5 9 Z"/></svg>`;
 
 function constelacion(d, occ) {
-  const ey = occ === 'condolencias' ? 'En memoria de' : occ === 'extraordinaria' ? 'Una ocasión para celebrar' : 'Un día especial para';
+  const ey = occ === 'condolencias' ? 'En memoria de' : occ === 'extraordinaria' ? 'Una ocasión para celebrar' : null;
   return `<div class="card tpl-constelacion ${occClass(occ)}">
   <div class="starfield"></div><div class="grain"></div>
   ${star(38,90,260,.9)}${star(22,180,360,.55,20)}${star(30,920,290,.8,15)}${star(18,860,420,.5)}
   ${star(26,100,1080,.7,30)}${star(36,940,1120,.85,-10)}${star(20,140,1540,.55)}${star(28,900,1580,.7,45)}
   ${star(16,500,180,.4)}${star(14,580,1780,.4)}
   <div class="ornament-top"><span class="line"></span><span class="dot"></span><span class="line"></span></div>
-  <div class="eyebrow">${ey}</div>
+  ${ey ? `<div class="eyebrow">${ey}</div>` : ''}
   <div class="headline">${d.headline}</div>
-  <div class="photo-ring"><div class="photo-gap"><div class="photo-frame">${photo(d.photo)}</div></div></div>
+  <div class="photo-frame">${photo(d.photo)}</div>
   <div class="name">${d.name || 'Nombre Apellido'}</div>
   <div class="name-rule"><span class="l"></span><span class="s">★</span><span class="l"></span></div>
   <div class="message">${d.message}</div>

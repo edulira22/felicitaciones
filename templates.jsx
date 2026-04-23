@@ -25,7 +25,7 @@ const sigSub = (occ) => {
 // ============ TEMPLATE 1: CONSTELACIÓN (script headline + círculo) ============
 const TplConstelacion = ({ data, occasion }) => {
   const occClass = occasion === "condolencias" ? "is-cond" : occasion === "extraordinaria" ? "is-extra" : "";
-  const eyebrow = occasion === "condolencias" ? "En memoria de" : occasion === "extraordinaria" ? "Una ocasión para celebrar" : "Un día especial para";
+  const eyebrow = occasion === "condolencias" ? "En memoria de" : occasion === "extraordinaria" ? "Una ocasión para celebrar" : null;
   return (
     <div className={`card tpl-constelacion ${occClass}`}>
       <div className="starfield" />
@@ -47,15 +47,11 @@ const TplConstelacion = ({ data, occasion }) => {
         <span className="dot" />
         <span className="line" />
       </div>
-      <div className="eyebrow">{eyebrow}</div>
+      {eyebrow && <div className="eyebrow">{eyebrow}</div>}
       <div className="headline">{data.headline}</div>
 
-      <div className="photo-ring">
-        <div className="photo-gap">
-          <div className="photo-frame">
-            <Photo src={data.photo} />
-          </div>
-        </div>
+      <div className="photo-frame">
+        <Photo src={data.photo} />
       </div>
 
       <div className="name">{data.name || "Nombre Apellido"}</div>
