@@ -86,13 +86,22 @@ Se reemplazaron por equivalentes hex:
 ```
 
 ### Fix relacionado: anillo dorado de la foto (template Constelación)
-`box-shadow` con múltiples capas sobre un círculo no se renderiza correctamente en html2canvas.
-Se reemplazó por **divs anidados reales**:
+Se intentó reemplazar el `box-shadow` por divs anidados (`.photo-ring > .photo-gap > .photo-frame`) para que html2canvas lo renderizara. Funcionó estructuralmente pero el `background:rgba(0,0,0,.55)` del gap hacía la foto verse oscura/opaca.
+
+**Solución final**: revertir al `box-shadow` original. Puppeteer es Chrome real y lo renderiza perfectamente. El workaround con divs solo era necesario para html2canvas, que ya no es el método principal.
+
+```css
+.tpl-constelacion .photo-frame {
+  box-shadow:
+    0 0 0 10px rgba(0,0,0,.4),   /* buffer oscuro */
+    0 0 0 22px #cfa847,          /* anillo dorado */
+    0 20px 60px rgba(0,0,0,.7);  /* sombra drop */
+}
 ```
-.photo-ring   → fondo dorado, border-radius 50%
-  .photo-gap  → fondo oscuro (separador), border-radius 50%
-    .photo-frame → clip circular con overflow:hidden
-```
+
+### Eyebrow eliminado en Cumpleaños
+"Un día especial para" + "Feliz Cumpleaños" resultaba redundante.
+El eyebrow ahora solo aparece en Condolencias ("En memoria de") y Logro ("Una ocasión para celebrar"), donde sí aporta contexto. En Cumpleaños el headline habla por sí solo.
 
 ---
 
@@ -106,6 +115,18 @@ Si no responde desde una terminal nueva:
 Seguir el flujo: GitHub.com → HTTPS → Y → Login with a web browser → ingresar código en `github.com/login/device`.
 
 Para operaciones git normales (push/pull), las credenciales se guardan en Windows Credential Manager automáticamente la primera vez que se hace push con éxito.
+
+---
+
+## Loading overlay
+
+Cuando el usuario hace clic en "Descargar PNG", Puppeteer tarda ~3-5 segundos.
+Se agregó un overlay de carga (`LoadingOverlay` en `app.jsx`) que bloquea la UI con:
+- Fondo oscuro con `backdrop-filter: blur`
+- Spinner animado en dorado
+- Texto "Generando tu felicitación / Esto puede tomar unos segundos…"
+
+El overlay desaparece automáticamente cuando la descarga termina o si hay error.
 
 ---
 

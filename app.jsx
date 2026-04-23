@@ -483,6 +483,7 @@ function App() {
         )}
 
         {toast && <div className="toast">{toast}</div>}
+        {busy && <LoadingOverlay />}
       </div>
     );
   }
@@ -512,6 +513,19 @@ function App() {
       </main>
 
       {toast && <div className="toast">{toast}</div>}
+      {busy && <LoadingOverlay />}
+    </div>
+  );
+}
+
+function LoadingOverlay() {
+  return (
+    <div className="loading-overlay">
+      <div className="loading-box">
+        <div className="loading-spinner" />
+        <div className="loading-title">Generando tu felicitación</div>
+        <div className="loading-sub">Esto puede tomar unos segundos…</div>
+      </div>
     </div>
   );
 }
