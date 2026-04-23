@@ -50,8 +50,12 @@ const TplConstelacion = ({ data, occasion }) => {
       <div className="eyebrow">{eyebrow}</div>
       <div className="headline">{data.headline}</div>
 
-      <div className="photo-frame">
-        <Photo src={data.photo} />
+      <div className="photo-ring">
+        <div className="photo-gap">
+          <div className="photo-frame">
+            <Photo src={data.photo} />
+          </div>
+        </div>
       </div>
 
       <div className="name">{data.name || "Nombre Apellido"}</div>

@@ -116,47 +116,54 @@ function App() {
     if (!data.photo) { showToast("Falta la foto"); return; }
     setBusy(true);
     try {
-      const card = cardRef.current.querySelector(".card");
-      const wrap = cardRef.current;
-
-      // Reset scale so html2canvas captures full resolution
-      const prevTransform = wrap.style.transform;
-      const prevPosition = wrap.style.position;
-      const prevTop = wrap.style.top;
-      const prevLeft = wrap.style.left;
-      wrap.style.transform = "scale(1)";
-      wrap.style.position = "fixed";
-      wrap.style.top = "-9999px";
-      wrap.style.left = "-9999px";
-
-      await new Promise((r) => setTimeout(r, 120));
-
-      const canvas = await html2canvas(card, {
-        width: 1080,
-        height: 1920,
-        scale: 1,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: null,
-        logging: false,
-        imageTimeout: 0,
-      });
-
-      // Restore position
-      wrap.style.transform = prevTransform;
-      wrap.style.position = prevPosition;
-      wrap.style.top = prevTop;
-      wrap.style.left = prevLeft;
-
       const safe = (data.name || "post").replace(/[^\w\s-]/g, "").trim().replace(/\s+/g, "-").toLowerCase();
-      const link = document.createElement("a");
-      link.download = `${OCCASIONS[occasion].label.toLowerCase().replace(/\s/g,"-")}-${safe}.png`;
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-      showToast("Descarga lista ✓");
+      const filename = `${OCCASIONS[occasion].label.toLowerCase().replace(/\s/g, "-")}-${safe}.png`;
+
+      // Try local Puppeteer render server first (100% fidelity)
+      let blob = null;
+      try {
+        const resp = await fetch("http://localhost:3001/render", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            template: tplId,
+            occasion,
+            name: data.name,
+            headline: data.headline,
+            message: data.message,
+            signName: data.signName,
+            photo: data.photo,
+          }),
+        });
+        if (resp.ok) blob = await resp.blob();
+      } catch (_) { /* server not running, fall through */ }
+
+      if (blob) {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.download = filename;
+        link.href = url;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        showToast("Descarga lista ✓");
+      } else {
+        // Fallback: html2canvas
+        const card = cardRef.current.querySelector(".card");
+        const wrap = cardRef.current;
+        const prev = wrap.style.transform;
+        wrap.style.transform = "scale(1)";
+        await new Promise((r) => setTimeout(r, 150));
+        const canvas = await html2canvas(card, { width:1080, height:1920, scale:2, useCORS:true, backgroundColor:null, logging:false });
+        wrap.style.transform = prev;
+        const link = document.createElement("a");
+        link.download = filename;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+        showToast("Descarga lista ✓ (modo básico)");
+      }
     } catch (err) {
       console.error(err);
-      showToast("Error al descargar — intenta de nuevo");
+      showToast("Error al descargar");
     } finally {
       setBusy(false);
     }
