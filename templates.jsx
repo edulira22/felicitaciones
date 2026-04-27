@@ -1,11 +1,14 @@
 // ============ TEMPLATES ============
 // 4 plantillas × 3 ocasiones. Cada una recibe {data, occasion}.
 
-const Photo = ({ src, alt = "Foto" }) => {
-  if (!src) {
-    return <div className="ph-placeholder">Foto</div>;
-  }
-  return <img src={src} alt={alt} crossOrigin="anonymous" />;
+const Photo = ({ src }) => {
+  if (!src) return <div className="ph-placeholder">Foto</div>;
+  return <div style={{
+    width: "100%", height: "100%",
+    backgroundImage: `url(${src})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+  }} />;
 };
 
 // Decorative star SVG
@@ -165,7 +168,7 @@ const TplRetrato = ({ data, occasion }) => {
     <div className={`card tpl-retrato ${occClass}`}>
       <div className="photo-full">
         {data.photo
-          ? <img src={data.photo} alt="Retrato" crossOrigin="anonymous" />
+          ? <div style={{width:"100%",height:"100%",backgroundImage:`url(${data.photo})`,backgroundSize:"cover",backgroundPosition:"center"}} />
           : <div className="ph-placeholder" style={{fontSize:48}}>Sube una foto</div>}
       </div>
       <div className="scrim" />

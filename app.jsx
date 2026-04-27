@@ -94,7 +94,18 @@ function App() {
   const handlePhoto = (file) => {
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (e) => setData((d) => ({ ...d, photo: e.target.result }));
+    reader.onload = (e) => {
+      // Draw on canvas to bake in EXIF rotation — html2canvas ignores EXIF
+      const img = new Image();
+      img.onload = () => {
+        const c = document.createElement("canvas");
+        c.width = img.naturalWidth;
+        c.height = img.naturalHeight;
+        c.getContext("2d").drawImage(img, 0, 0);
+        setData((d) => ({ ...d, photo: c.toDataURL("image/jpeg", 0.93) }));
+      };
+      img.src = e.target.result;
+    };
     reader.readAsDataURL(file);
   };
 

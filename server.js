@@ -16,7 +16,9 @@ app.use(express.static('.'));
 
 const sigSub = (o) => o === 'condolencias' ? 'Con sentido pésame' : o === 'extraordinaria' ? 'Sinceras felicitaciones' : 'Con mucho cariño';
 const occClass = (o) => o === 'condolencias' ? 'is-cond' : o === 'extraordinaria' ? 'is-extra' : '';
-const photo = (src) => src ? `<img src="${src}" style="width:100%;height:100%;object-fit:cover">` : '<div class="ph-placeholder">Foto</div>';
+const photo = (src) => src
+  ? `<div style="width:100%;height:100%;background-image:url('${src}');background-size:cover;background-position:center"></div>`
+  : '<div class="ph-placeholder">Foto</div>';
 const star = (size, x, y, op, rot = 0) => `<svg class="star" style="left:${x}px;top:${y}px;width:${size}px;height:${size}px;opacity:${op};transform:rotate(${rot}deg)" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1 L14.5 9 L23 12 L14.5 15 L12 23 L9.5 15 L1 12 L9.5 9 Z"/></svg>`;
 
 function constelacion(d, occ) {
