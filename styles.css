@@ -411,30 +411,26 @@ body{overflow:hidden}
   position:absolute;
   top:466px;left:50%;
   transform:translateX(-50%);
+  /* border = anillo dorado (12px), padding = gap oscuro (8px)
+     box-sizing:border-box → contenido = 680 - 2*12 - 2*8 = 640px ✓ */
   width:680px;height:680px;
   border-radius:50%;
-  background:#cfa847;
+  border:12px solid #cfa847;
+  padding:8px;
+  background:#050507;
   display:flex;align-items:center;justify-content:center;
   box-shadow:0 24px 70px rgba(0,0,0,.75);
 }
-.tpl-constelacion .photo-gap{
-  width:656px;height:656px;
-  border-radius:50%;
-  background:#050507; /* mismo color que el fondo de la card — sin transparencia */
-  display:flex;align-items:center;justify-content:center;
-}
+/* photo-gap ya no se usa en el DOM */
 .tpl-constelacion .photo-frame{
   width:640px;height:640px;
   border-radius:50%;
   border:2px solid rgba(255,255,255,.9);
   background-color:#1a1a1e;
+  background-size:cover;
+  background-position:center;
   display:flex;align-items:center;justify-content:center;
-}
-.tpl-constelacion .photo-img{
-  width:640px;height:640px;
-  border-radius:50%;
-  object-fit:cover;
-  display:block;
+  overflow:hidden;
 }
 .tpl-constelacion .stars-deco{
   position:absolute;inset:0;
