@@ -411,15 +411,15 @@ body{overflow:hidden}
   position:absolute;
   top:466px;left:50%;
   transform:translateX(-50%);
-  /* border = anillo dorado (12px), padding = gap oscuro (8px)
-     box-sizing:border-box → contenido = 680 - 2*12 - 2*8 = 640px ✓ */
+  /* border=anillo dorado(12px), padding=gap(8px), background TRANSPARENT
+     html2canvas renderiza bg del padre ENCIMA de hijos — con transparent no hay overlay oscuro
+     El fondo oscuro del gap lo da la carta (#050507) que se ve a través del padding */
   width:680px;height:680px;
   border-radius:50%;
   border:12px solid #cfa847;
   padding:8px;
-  background:#050507;
+  background:transparent;
   display:flex;align-items:center;justify-content:center;
-  box-shadow:0 24px 70px rgba(0,0,0,.75);
 }
 /* photo-gap ya no se usa en el DOM */
 .tpl-constelacion .photo-frame{
