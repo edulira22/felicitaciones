@@ -406,20 +406,33 @@ body{overflow:hidden}
   font-weight:400;
   text-shadow: 0 2px 30px rgba(255,255,255,.08);
 }
-.tpl-constelacion .photo-frame{
+/* Anillo dorado — DOM estructural (html2canvas no renderiza box-shadow múltiple) */
+.tpl-constelacion .photo-ring{
   position:absolute;
-  top:480px;left:50%;
+  top:466px;left:50%;
   transform:translateX(-50%);
+  width:680px;height:680px;
+  border-radius:50%;
+  background:#cfa847;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 24px 70px rgba(0,0,0,.75);
+}
+.tpl-constelacion .photo-gap{
+  width:656px;height:656px;
+  border-radius:50%;
+  background:#050507; /* mismo color que el fondo de la card — sin transparencia */
+  display:flex;align-items:center;justify-content:center;
+}
+.tpl-constelacion .photo-frame{
   width:640px;height:640px;
   border-radius:50%;
-  overflow:hidden;
   border:2px solid rgba(255,255,255,.9);
-  box-shadow:
-    0 0 0 10px rgba(0,0,0,.4),
-    0 0 0 22px #cfa847,
-    0 20px 60px rgba(0,0,0,.7);
+  background-size:cover;
+  background-position:center;
+  background-color:#1a1a1e;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
 }
-.tpl-constelacion .photo-frame img{width:100%;height:100%;object-fit:cover}
 .tpl-constelacion .stars-deco{
   position:absolute;inset:0;
   pointer-events:none;
@@ -536,8 +549,10 @@ body{overflow:hidden}
   border:10px solid #fff;
   outline:1px solid #d4c5a8;
   outline-offset:4px;
+  background-size:cover;
+  background-position:center;
+  background-color:#ccc;
 }
-.tpl-atelier .photo-frame img{width:100%;height:100%;object-fit:cover}
 .tpl-atelier .name{
   position:absolute;
   bottom:320px;left:0;right:0;
@@ -642,6 +657,8 @@ body{overflow:hidden}
   width:500px;height:650px;
   overflow:hidden;
   background:#222;
+  background-size:cover;
+  background-position:center;
 }
 .tpl-editorial .photo-frame > div{filter:contrast(1.02)}
 .tpl-editorial .photo-caption{
@@ -719,6 +736,9 @@ body{overflow:hidden}
 .tpl-retrato .photo-full{
   position:absolute;
   inset:0;
+  background-size:cover;
+  background-position:center;
+  filter:saturate(.95) contrast(1.05);
 }
 .tpl-retrato .photo-full img{
   width:100%;height:100%;

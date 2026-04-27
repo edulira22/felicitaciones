@@ -1,15 +1,12 @@
 // ============ TEMPLATES ============
-// 4 plantillas × 3 ocasiones. Cada una recibe {data, occasion}.
+// background-image se aplica directo en el contenedor — no hay img ni div hijo.
+// Así border-radius clipea el bg nativamente sin overflow:hidden ni html2canvas workarounds.
 
-const Photo = ({ src }) => {
-  if (!src) return <div className="ph-placeholder">Foto</div>;
-  return <div style={{
-    width: "100%", height: "100%",
-    backgroundImage: `url(${src})`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-  }} />;
-};
+const bgPhoto = (src) => src
+  ? { backgroundImage: `url(${src})`, backgroundSize: "cover", backgroundPosition: "center" }
+  : {};
+
+const Placeholder = () => <div className="ph-placeholder">Foto</div>;
 
 // Decorative star SVG
 const Star = ({ size = 24, x, y, opacity = 0.7, rotate = 0 }) => (
@@ -18,14 +15,13 @@ const Star = ({ size = 24, x, y, opacity = 0.7, rotate = 0 }) => (
   </svg>
 );
 
-// Pick signature subtitle per occasion
 const sigSub = (occ) => {
   if (occ === "condolencias") return "Con sentido pésame";
   if (occ === "extraordinaria") return "Sinceras felicitaciones";
   return "Con mucho cariño";
 };
 
-// ============ TEMPLATE 1: CONSTELACIÓN (script headline + círculo) ============
+// ============ TEMPLATE 1: CONSTELACIÓN ============
 const TplConstelacion = ({ data, occasion }) => {
   const occClass = occasion === "condolencias" ? "is-cond" : occasion === "extraordinaria" ? "is-extra" : "";
   const eyebrow = occasion === "condolencias" ? "En memoria de" : occasion === "extraordinaria" ? "Una ocasión para celebrar" : null;
@@ -46,22 +42,23 @@ const TplConstelacion = ({ data, occasion }) => {
       <Star size={14} x={580} y={1780} opacity={0.4} />
 
       <div className="ornament-top">
-        <span className="line" />
-        <span className="dot" />
-        <span className="line" />
+        <span className="line" /><span className="dot" /><span className="line" />
       </div>
       {eyebrow && <div className="eyebrow">{eyebrow}</div>}
       <div className="headline">{data.headline}</div>
 
-      <div className="photo-frame">
-        <Photo src={data.photo} />
+      {/* Anillo dorado: photo-ring > photo-gap > photo-frame (bg-image en frame) */}
+      <div className="photo-ring">
+        <div className="photo-gap">
+          <div className="photo-frame" style={bgPhoto(data.photo)}>
+            {!data.photo && <Placeholder />}
+          </div>
+        </div>
       </div>
 
       <div className="name">{data.name || "Nombre Apellido"}</div>
       <div className="name-rule">
-        <span className="l" />
-        <span className="s">★</span>
-        <span className="l" />
+        <span className="l" /><span className="s">★</span><span className="l" />
       </div>
       <div className="message">{data.message}</div>
 
@@ -74,32 +71,28 @@ const TplConstelacion = ({ data, occasion }) => {
   );
 };
 
-// ============ TEMPLATE 2: ATELIER (claro, marco clásico) ============
+// ============ TEMPLATE 2: ATELIER ============
 const TplAtelier = ({ data, occasion }) => {
   const occClass = occasion === "condolencias" ? "is-cond" : occasion === "extraordinaria" ? "is-extra" : "";
   const eyebrow = occasion === "condolencias" ? "In Memoriam" : occasion === "extraordinaria" ? "Una Ocasión Memorable" : "Una Felicitación Para";
   return (
     <div className={`card tpl-atelier ${occClass}`}>
       <div className="paper-tex" />
-      <div className="corner tl" />
-      <div className="corner tr" />
-      <div className="corner bl" />
-      <div className="corner br" />
+      <div className="corner tl" /><div className="corner tr" />
+      <div className="corner bl" /><div className="corner br" />
 
       <div className="eyebrow">{eyebrow}</div>
       <div className="headline">{data.headline}</div>
-
       <div className="divider">
         <span className="l" /><span className="d" /><span className="l" />
       </div>
 
-      <div className="photo-frame">
-        <Photo src={data.photo} />
+      <div className="photo-frame" style={bgPhoto(data.photo)}>
+        {!data.photo && <Placeholder />}
       </div>
 
       <div className="name">{data.name || "Nombre Apellido"}</div>
       <div className="message">"{data.message}"</div>
-
       <div className="signature">
         <div className="sig-name">{data.signName}</div>
         <div className="sig-sub">{sigSub(occasion)}</div>
@@ -114,29 +107,23 @@ const TplEditorial = ({ data, occasion }) => {
   const number = occasion === "condolencias" ? "∞" : occasion === "extraordinaria" ? "★" : "N°";
   const mastLabel = occasion === "condolencias" ? "Homenaje · En Memoria" : occasion === "extraordinaria" ? "Honor al Mérito" : "Día Especial";
   const mastRight = occasion === "condolencias" ? "Con respeto" : occasion === "extraordinaria" ? "Edición especial" : "Edición íntima";
-
   const words = (data.headline || "").split(" ");
   const mid = Math.ceil(words.length / 2);
-  const headLine1 = words.slice(0, mid).join(" ");
-  const headLine2 = words.slice(mid).join(" ");
 
   return (
     <div className={`card tpl-editorial ${occClass}`}>
       <div className="grain" />
-
       <div className="masthead">
         <div className="left">{mastLabel}</div>
         <div className="right">{mastRight}</div>
       </div>
-
       <div className="number">{number}<small></small></div>
-
       <div className="headline">
-        {headLine1}<br/><em>{headLine2}</em>
+        {words.slice(0, mid).join(" ")}<br/><em>{words.slice(mid).join(" ")}</em>
       </div>
 
-      <div className="photo-frame">
-        <Photo src={data.photo} />
+      <div className="photo-frame" style={bgPhoto(data.photo)}>
+        {!data.photo && <Placeholder />}
       </div>
 
       <div className="photo-caption">
@@ -144,56 +131,39 @@ const TplEditorial = ({ data, occasion }) => {
         <div className="cap-name">{data.name || "Nombre Apellido"}</div>
         <div className="cap-text">"{data.message}"</div>
       </div>
-
       <div className="folio">
         <div>
           <div className="sig">{data.signName}</div>
           <div className="sig-sub">{sigSub(occasion)}</div>
         </div>
-        <div className="meta">
-          Morelia · Michoacán<br/>
-          MMXXVI
-        </div>
+        <div className="meta">Morelia · Michoacán<br/>MMXXVI</div>
       </div>
     </div>
   );
 };
 
-// ============ TEMPLATE 4: RETRATO (full-bleed foto) ============
+// ============ TEMPLATE 4: RETRATO ============
 const TplRetrato = ({ data, occasion }) => {
   const occClass = occasion === "condolencias" ? "is-cond" : occasion === "extraordinaria" ? "is-extra" : "";
   const eyebrow = occasion === "condolencias" ? "Descanse en paz" : occasion === "extraordinaria" ? "Una distinción merecida" : "Hoy celebramos a";
   const tag = occasion === "condolencias" ? "HOMENAJE" : occasion === "extraordinaria" ? "ENHORABUENA" : "FELICITACIÓN";
   return (
     <div className={`card tpl-retrato ${occClass}`}>
-      <div className="photo-full">
-        {data.photo
-          ? <div style={{width:"100%",height:"100%",backgroundImage:`url(${data.photo})`,backgroundSize:"cover",backgroundPosition:"center"}} />
-          : <div className="ph-placeholder" style={{fontSize:48}}>Sube una foto</div>}
+      <div className="photo-full" style={bgPhoto(data.photo)}>
+        {!data.photo && <div className="ph-placeholder" style={{fontSize:48}}>Sube una foto</div>}
       </div>
       <div className="scrim" />
-
       <div className="corner-deco">
-        <div className="cd-l">
-          <span className="bar" />
-          <span className="tx">{tag}</span>
-        </div>
-        <div className="cd-r">
-          Michoacán<br/>
-          MMXXVI
-        </div>
+        <div className="cd-l"><span className="bar" /><span className="tx">{tag}</span></div>
+        <div className="cd-r">Michoacán<br/>MMXXVI</div>
       </div>
-
       <div className="headline">{data.headline}</div>
-
       <div className="bottom-block">
         <div className="eyebrow">{eyebrow}</div>
         <div className="name">{data.name || "Nombre Apellido"}</div>
         <div className="message">{data.message}</div>
         <div className="signature">
-          <div>
-            <div className="sig-name">{data.signName}</div>
-          </div>
+          <div><div className="sig-name">{data.signName}</div></div>
           <div className="sig-sub">{sigSub(occasion)}</div>
         </div>
       </div>
@@ -201,7 +171,6 @@ const TplRetrato = ({ data, occasion }) => {
   );
 };
 
-// Export to window so app.jsx can use them
 window.Templates = [
   { id: "constelacion", name: "Constelación", component: TplConstelacion },
   { id: "atelier", name: "Atelier", component: TplAtelier },

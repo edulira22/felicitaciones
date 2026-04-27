@@ -16,9 +16,10 @@ app.use(express.static('.'));
 
 const sigSub = (o) => o === 'condolencias' ? 'Con sentido pésame' : o === 'extraordinaria' ? 'Sinceras felicitaciones' : 'Con mucho cariño';
 const occClass = (o) => o === 'condolencias' ? 'is-cond' : o === 'extraordinaria' ? 'is-extra' : '';
-const photo = (src) => src
-  ? `<div style="width:100%;height:100%;background-image:url('${src}');background-size:cover;background-position:center"></div>`
-  : '<div class="ph-placeholder">Foto</div>';
+const photo = (src) => src ? '' : '<div class="ph-placeholder">Foto</div>';
+const bgPhoto = (src) => src
+  ? `background-image:url('${src}');background-size:cover;background-position:center`
+  : '';
 const star = (size, x, y, op, rot = 0) => `<svg class="star" style="left:${x}px;top:${y}px;width:${size}px;height:${size}px;opacity:${op};transform:rotate(${rot}deg)" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1 L14.5 9 L23 12 L14.5 15 L12 23 L9.5 15 L1 12 L9.5 9 Z"/></svg>`;
 
 function constelacion(d, occ) {
@@ -31,7 +32,7 @@ function constelacion(d, occ) {
   <div class="ornament-top"><span class="line"></span><span class="dot"></span><span class="line"></span></div>
   ${ey ? `<div class="eyebrow">${ey}</div>` : ''}
   <div class="headline">${d.headline}</div>
-  <div class="photo-frame">${photo(d.photo)}</div>
+  <div class="photo-ring"><div class="photo-gap"><div class="photo-frame" style="${bgPhoto(d.photo)}">${photo(d.photo)}</div></div></div>
   <div class="name">${d.name || 'Nombre Apellido'}</div>
   <div class="name-rule"><span class="l"></span><span class="s">★</span><span class="l"></span></div>
   <div class="message">${d.message}</div>
@@ -48,7 +49,7 @@ function atelier(d, occ) {
   <div class="eyebrow">${ey}</div>
   <div class="headline">${d.headline}</div>
   <div class="divider"><span class="l"></span><span class="d"></span><span class="l"></span></div>
-  <div class="photo-frame">${photo(d.photo)}</div>
+  <div class="photo-frame" style="${bgPhoto(d.photo)}">${photo(d.photo)}</div>
   <div class="name">${d.name || 'Nombre Apellido'}</div>
   <div class="message">"${d.message}"</div>
   <div class="signature"><div class="sig-name">${d.signName}</div><div class="sig-sub">${sigSub(occ)}</div></div>
@@ -67,7 +68,7 @@ function editorial(d, occ) {
   <div class="masthead"><div class="left">${ml}</div><div class="right">${mr}</div></div>
   <div class="number">${num}<small></small></div>
   <div class="headline">${words.slice(0,mid).join(' ')}<br><em>${words.slice(mid).join(' ')}</em></div>
-  <div class="photo-frame">${photo(d.photo)}</div>
+  <div class="photo-frame" style="${bgPhoto(d.photo)}">${photo(d.photo)}</div>
   <div class="photo-caption">
     <div class="cap-label">${cl}</div>
     <div class="cap-name">${d.name || 'Nombre Apellido'}</div>
@@ -83,9 +84,8 @@ function editorial(d, occ) {
 function retrato(d, occ) {
   const ey = occ === 'condolencias' ? 'Descanse en paz' : occ === 'extraordinaria' ? 'Una distinción merecida' : 'Hoy celebramos a';
   const tag = occ === 'condolencias' ? 'HOMENAJE' : occ === 'extraordinaria' ? 'ENHORABUENA' : 'FELICITACIÓN';
-  const ph = d.photo ? `<img src="${d.photo}" style="width:100%;height:100%;object-fit:cover;filter:saturate(.95) contrast(1.05)">` : '<div class="ph-placeholder" style="font-size:48px">Sube una foto</div>';
   return `<div class="card tpl-retrato ${occClass(occ)}">
-  <div class="photo-full">${ph}</div>
+  <div class="photo-full" style="${bgPhoto(d.photo)}">${photo(d.photo)}</div>
   <div class="scrim"></div>
   <div class="corner-deco">
     <div class="cd-l"><span class="bar"></span><span class="tx">${tag}</span></div>
