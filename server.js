@@ -32,7 +32,7 @@ function constelacion(d, occ) {
   <div class="ornament-top"><span class="line"></span><span class="dot"></span><span class="line"></span></div>
   ${ey ? `<div class="eyebrow">${ey}</div>` : ''}
   <div class="headline">${d.headline}</div>
-  <div class="photo-ring"><div class="photo-frame" style="${bgPhoto(d.photo)}">${photo(d.photo)}</div></div>
+  <div class="photo-ring"><div class="photo-frame">${d.photo ? `<img class="photo-img" src="${d.photo}" alt="">` : '<div class="ph-placeholder">Foto</div>'}</div></div>
   <div class="name">${d.name || 'Nombre Apellido'}</div>
   <div class="name-rule"><span class="l"></span><span class="s">★</span><span class="l"></span></div>
   <div class="message">${d.message}</div>

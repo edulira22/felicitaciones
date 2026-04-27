@@ -47,10 +47,13 @@ const TplConstelacion = ({ data, occasion }) => {
       {eyebrow && <div className="eyebrow">{eyebrow}</div>}
       <div className="headline">{data.headline}</div>
 
-      {/* Anillo: border=gold, padding=gap oscuro en photo-ring. Sin photo-gap intermedio — evita bug de html2canvas que renderiza bg del padre sobre hijos flex */}
+      {/* photo-ring: transparent, border dorado, padding=gap. photo-frame: SIN bg ni overflow:hidden.
+          img con su propio border-radius:50% — evita todos los bugs de html2canvas con bg + border-radius */}
       <div className="photo-ring">
-        <div className="photo-frame" style={bgPhoto(data.photo)}>
-          {!data.photo && <Placeholder />}
+        <div className="photo-frame">
+          {data.photo
+            ? <img className="photo-img" src={data.photo} alt="" />
+            : <Placeholder />}
         </div>
       </div>
 

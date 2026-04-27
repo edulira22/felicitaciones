@@ -421,16 +421,20 @@ body{overflow:hidden}
   background:transparent;
   display:flex;align-items:center;justify-content:center;
 }
-/* photo-gap ya no se usa en el DOM */
+/* photo-frame: solo contenedor con borde blanco, SIN background-color ni overflow:hidden
+   — html2canvas puede pintar bg-color SOBRE el background-image, lo que oscurece la foto */
 .tpl-constelacion .photo-frame{
   width:640px;height:640px;
   border-radius:50%;
   border:2px solid rgba(255,255,255,.9);
-  background-color:#1a1a1e;
-  background-size:cover;
-  background-position:center;
   display:flex;align-items:center;justify-content:center;
-  overflow:hidden;
+}
+/* La foto va como <img> con su propio border-radius — html2canvas lo clipea correctamente */
+.tpl-constelacion .photo-img{
+  width:640px;height:640px;
+  border-radius:50%;
+  object-fit:cover;
+  display:block;
 }
 .tpl-constelacion .stars-deco{
   position:absolute;inset:0;
