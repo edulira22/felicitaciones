@@ -427,11 +427,14 @@ body{overflow:hidden}
   width:640px;height:640px;
   border-radius:50%;
   border:2px solid rgba(255,255,255,.9);
-  background-size:cover;
-  background-position:center;
   background-color:#1a1a1e;
   display:flex;align-items:center;justify-content:center;
-  overflow:hidden;
+}
+.tpl-constelacion .photo-img{
+  width:640px;height:640px;
+  border-radius:50%;
+  object-fit:cover;
+  display:block;
 }
 .tpl-constelacion .stars-deco{
   position:absolute;inset:0;

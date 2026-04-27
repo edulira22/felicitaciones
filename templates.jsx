@@ -47,11 +47,11 @@ const TplConstelacion = ({ data, occasion }) => {
       {eyebrow && <div className="eyebrow">{eyebrow}</div>}
       <div className="headline">{data.headline}</div>
 
-      {/* Anillo dorado: photo-ring > photo-gap > photo-frame (bg-image en frame) */}
+      {/* Anillo dorado: photo-ring > photo-gap > photo-frame > img (border-radius en img, sin overflow:hidden en padre) */}
       <div className="photo-ring">
         <div className="photo-gap">
-          <div className="photo-frame" style={bgPhoto(data.photo)}>
-            {!data.photo && <Placeholder />}
+          <div className="photo-frame">
+            {data.photo ? <img className="photo-img" src={data.photo} alt="" /> : <Placeholder />}
           </div>
         </div>
       </div>
