@@ -158,20 +158,19 @@ function App() {
         setTimeout(() => URL.revokeObjectURL(url), 1000);
         showToast("Descarga lista ✓");
       } else {
-        // Fallback: renderizar en div off-screen a 1080×1920 real (sin transform scale)
-        // → evita que React revierta el transform y html2canvas capture a tamaño incorrecto
+        // Fallback: off-screen render → html2canvas captura texto/fondos/anillos,
+        // luego sobreponemos la foto circular directamente con Canvas API
+        // (html2canvas no puede leer el pixel data del <canvas> de CirclePhoto correctamente)
         const offscreen = document.createElement("div");
         offscreen.style.cssText = "position:fixed;left:-2200px;top:0;width:1080px;height:1920px;overflow:hidden;pointer-events:none;";
         document.body.appendChild(offscreen);
 
         const root = ReactDOM.createRoot(offscreen);
         root.render(React.createElement(Template, { data, occasion }));
-
-        // Esperar a que React renderice y CirclePhoto dibuje el canvas
-        await new Promise((r) => setTimeout(r, 700));
+        await new Promise((r) => setTimeout(r, 400));
 
         const card = offscreen.querySelector(".card") || offscreen;
-        const canvas = await html2canvas(card, {
+        const out = await html2canvas(card, {
           width: 1080, height: 1920, scale: 2,
           useCORS: true, backgroundColor: null, logging: false,
         });
@@ -179,9 +178,32 @@ function App() {
         root.unmount();
         document.body.removeChild(offscreen);
 
+        // Constelación: sobreponemos la foto circular con canvas API directo
+        // Coordenadas: photo-ring top:466px, centro (540, 806), radio 320px en tarjeta
+        if (data.photo && tplId === "constelacion") {
+          await new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => {
+              const ctx = out.getContext("2d");
+              const s = 2; // output scale
+              const cx = 540 * s, cy = 806 * s, r = 320 * s;
+              ctx.save();
+              ctx.beginPath();
+              ctx.arc(cx, cy, r, 0, Math.PI * 2);
+              ctx.clip();
+              const ps = Math.max(r * 2 / img.naturalWidth, r * 2 / img.naturalHeight);
+              const w = img.naturalWidth * ps, h = img.naturalHeight * ps;
+              ctx.drawImage(img, cx - w / 2, cy - h / 2, w, h);
+              ctx.restore();
+              resolve();
+            };
+            img.src = data.photo;
+          });
+        }
+
         const link = document.createElement("a");
         link.download = filename;
-        link.href = canvas.toDataURL("image/png");
+        link.href = out.toDataURL("image/png");
         link.click();
         showToast("Descarga lista ✓ (modo básico)");
       }
