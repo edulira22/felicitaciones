@@ -1,12 +1,36 @@
 // ============ TEMPLATES ============
-// background-image se aplica directo en el contenedor — no hay img ni div hijo.
-// Así border-radius clipea el bg nativamente sin overflow:hidden ni html2canvas workarounds.
 
 const bgPhoto = (src) => src
   ? { backgroundImage: `url(${src})`, backgroundSize: "cover", backgroundPosition: "center" }
   : {};
 
 const Placeholder = () => <div className="ph-placeholder">Foto</div>;
+
+// CirclePhoto: dibuja la foto en un <canvas> con clip circular + cover scaling.
+// html2canvas copia el canvas pixel a pixel — evita TODOS los bugs de CSS rendering.
+const CirclePhoto = ({ src }) => {
+  const ref = React.useRef(null);
+  React.useEffect(() => {
+    if (!src || !ref.current) return;
+    const canvas = ref.current;
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+    img.onload = () => {
+      ctx.clearRect(0, 0, 640, 640);
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(320, 320, 320, 0, Math.PI * 2);
+      ctx.clip();
+      const scale = Math.max(640 / img.naturalWidth, 640 / img.naturalHeight);
+      const w = img.naturalWidth * scale;
+      const h = img.naturalHeight * scale;
+      ctx.drawImage(img, (640 - w) / 2, (640 - h) / 2, w, h);
+      ctx.restore();
+    };
+    img.src = src;
+  }, [src]);
+  return <canvas ref={ref} width={640} height={640} className="photo-canvas" />;
+};
 
 // Decorative star SVG
 const Star = ({ size = 24, x, y, opacity = 0.7, rotate = 0 }) => (
@@ -47,13 +71,10 @@ const TplConstelacion = ({ data, occasion }) => {
       {eyebrow && <div className="eyebrow">{eyebrow}</div>}
       <div className="headline">{data.headline}</div>
 
-      {/* photo-ring: transparent, border dorado, padding=gap. photo-frame: SIN bg ni overflow:hidden.
-          img con su propio border-radius:50% — evita todos los bugs de html2canvas con bg + border-radius */}
+      {/* CirclePhoto renderiza la foto en canvas con clip + cover — html2canvas copia píxeles directos */}
       <div className="photo-ring">
         <div className="photo-frame">
-          {data.photo
-            ? <img className="photo-img" src={data.photo} alt="" />
-            : <Placeholder />}
+          {data.photo ? <CirclePhoto src={data.photo} /> : <Placeholder />}
         </div>
       </div>
 
