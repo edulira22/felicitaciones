@@ -158,14 +158,27 @@ function App() {
         setTimeout(() => URL.revokeObjectURL(url), 1000);
         showToast("Descarga lista ✓");
       } else {
-        // Fallback: html2canvas
-        const card = cardRef.current.querySelector(".card");
-        const wrap = cardRef.current;
-        const prev = wrap.style.transform;
-        wrap.style.transform = "scale(1)";
-        await new Promise((r) => setTimeout(r, 150));
-        const canvas = await html2canvas(card, { width:1080, height:1920, scale:2, useCORS:true, backgroundColor:null, logging:false });
-        wrap.style.transform = prev;
+        // Fallback: renderizar en div off-screen a 1080×1920 real (sin transform scale)
+        // → evita que React revierta el transform y html2canvas capture a tamaño incorrecto
+        const offscreen = document.createElement("div");
+        offscreen.style.cssText = "position:fixed;left:-2200px;top:0;width:1080px;height:1920px;overflow:hidden;pointer-events:none;";
+        document.body.appendChild(offscreen);
+
+        const root = ReactDOM.createRoot(offscreen);
+        root.render(React.createElement(Template, { data, occasion }));
+
+        // Esperar a que React renderice y CirclePhoto dibuje el canvas
+        await new Promise((r) => setTimeout(r, 700));
+
+        const card = offscreen.querySelector(".card") || offscreen;
+        const canvas = await html2canvas(card, {
+          width: 1080, height: 1920, scale: 2,
+          useCORS: true, backgroundColor: null, logging: false,
+        });
+
+        root.unmount();
+        document.body.removeChild(offscreen);
+
         const link = document.createElement("a");
         link.download = filename;
         link.href = canvas.toDataURL("image/png");
