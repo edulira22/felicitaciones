@@ -326,7 +326,7 @@ body{overflow:hidden}
 /* Starry/noise background mix-ins shared by templates */
 .starfield{
   position:absolute;inset:0;
-  background-color:#050507;
+  background-color:transparent;
   background-image:
     radial-gradient(1px 1px at 12% 8%, #fff, transparent 50%),
     radial-gradient(1px 1px at 78% 15%, #fff8, transparent 50%),
@@ -373,7 +373,7 @@ body{overflow:hidden}
 
 /* =============== TEMPLATE 1: "Constelación" =============== */
 .tpl-constelacion{
-  background:#050507;
+  background: radial-gradient(ellipse at 50% 38%, #1a1a2e 0%, #0d0d18 40%, #050507 100%);
   color:#fff;
   font-family:'Cormorant Garamond',serif;
 }
